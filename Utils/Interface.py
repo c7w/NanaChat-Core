@@ -33,7 +33,7 @@ class MessageElement(metaclass=ABCMeta):
 
     @property
     @abstractmethod
-    def type(self):
+    def type(self) -> MessageType:
         raise NotImplementedError
 
     @staticmethod
@@ -47,20 +47,26 @@ class MessageElement(metaclass=ABCMeta):
 
 class MessagePlainText(MessageElement):
     @property
-    def type(self):
+    def type(self) -> MessageType:
         return MessageType.TEXT
 
     def __str__(self):
         return f"[MessagePlainText: {self.content}]"
+    
+    def toQQMessageChain(self):
+        return {"type": "Plain", "text": f"{self.content}"}
 
 
 class MessageImage(MessageElement):
     @property
-    def type(self):
+    def type(self) -> MessageType:
         return MessageType.Image
 
     def __str__(self):
         return f"[MessageImage: {self.content}]"
+
+    def toQQMessageChain(self):
+        return {"type": "Image", "url": f"{self.content}"}
 
 # Destination
 
@@ -73,7 +79,7 @@ class DestinationType(Enum):
 class Destination(metaclass=ABCMeta):
     @property
     @abstractmethod
-    def type(self):
+    def type(self) -> DestinationType:
         raise NotImplementedError
 
     @property
@@ -86,11 +92,19 @@ class Destination(metaclass=ABCMeta):
 
     def __init__(self, content):
         self.content = content
+    
+    @staticmethod
+    def fromQQFriend(content):
+        return DestinationQQFriend(content)
+    
+    @staticmethod
+    def fromQQGroup(content):
+        return DestinationQQGroup(content)
 
 
 class DestinationQQFriend(Destination):
     @property
-    def type(self):
+    def type(self) -> DestinationType:
         return DestinationType.QQFriend
 
     def __str__(self):
@@ -98,7 +112,7 @@ class DestinationQQFriend(Destination):
 
 class DestinationQQGroup(Destination):
     @property
-    def type(self):
+    def type(self) -> DestinationType:
         return DestinationType.QQGroup
 
     def __str__(self):
@@ -108,7 +122,7 @@ class DestinationQQGroup(Destination):
 # Dispatcher action
 class Action():
     @property
-    def message(self):
+    def message(self) -> List[MessageElement]:
         return self._message
 
     @message.setter
@@ -116,7 +130,7 @@ class Action():
         self._message = value
 
     @property
-    def destination(self):
+    def destination(self) -> List[Destination]:
         return self._destination
 
     @destination.setter
@@ -125,8 +139,4 @@ class Action():
 
     def __init__(self, message: List[MessageElement], destination: List[Destination]):
         self.message = message
-        self
-
-
-if __name__ == "__main__":
-    print(MessageElement.fromPlainText("123"))
+        self.destination = destination
