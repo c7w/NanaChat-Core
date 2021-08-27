@@ -3,6 +3,7 @@ Nana-Core: Main Module
 Under development...
 '''
 
+from Utils.Listener import MainListener
 from Utils.Dispatcher import Dispatcher
 from Utils.Interface import Action, Destination, MessageElement
 from Utils.PluginManager import PluginManager
@@ -15,6 +16,4 @@ def Test1():
 
 if __name__ == "__main__":
     PluginManager.AppStart()
-    print(2)
-    action = Action([MessageElement.fromPlainText("123")], [Destination.fromQQGroup(683950981)])
-    Dispatcher.send(action)
+    MainListener.run(host="0.0.0.0", port=5051)
