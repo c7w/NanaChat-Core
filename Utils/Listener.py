@@ -1,21 +1,38 @@
+from abc import ABC, abstractmethod
+from typing import Callable
+from Utils.PluginManager import PluginManager
+from Utils.Interface import Action
+from os import stat
+
+
 '''
 Nana-Core: **Listener** Module
 
-+  Listen on port 5051 for events from Mirai-api-HTTP
-+  Export **Listener** Class
-    - Classes derived from **Listener** would process acquired events
++ Listener class
 '''
 
-from Utils.Dispatcher import Dispatcher
-from Utils.Interface import Action, Destination, MessageElement
-from flask import Flask, request
-from flask_cors import CORS
 
-MainListener = Flask(__name__)
-cors = CORS(MainListener, resources={r"/api/*": {"origins": "*"}})
+class Listener():
+    PluginListeners = []
+    
+    def __init__(self, uniqueId: str, notify: Callable[[Action], None], enabled=True):
+        self.uniqueId = uniqueId
+        self.notify = notify
+        self.enabled = enabled
+        
+    @staticmethod
+    def notifyAll(action: Action):
+        for listener in Listener.PluginListeners:
+            if listener.enabled ==  True:
+                listener.notify(action)
 
-@MainListener.route("/recv", methods=['GET', 'POST'])
-def recv():
-    action = Action([MessageElement.fromPlainText(str(request.json))], [Destination.fromQQGroup(683950981)])
-    Dispatcher.send(action)
-    return "received"
+    @staticmethod
+    def getListenerById(uniqueId):
+        for listener in Listener.PluginListeners:
+            if listener.uniqueId == uniqueId:
+                return listener
+        return None
+
+    @staticmethod
+    def registerListener(listener):
+        Listener.PluginListeners.append(listener)

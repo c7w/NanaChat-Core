@@ -60,7 +60,7 @@ class MessagePlainText(MessageElement):
 class MessageImage(MessageElement):
     @property
     def type(self) -> MessageType:
-        return MessageType.Image
+        return MessageType.IMAGE
 
     def __str__(self):
         return f"[MessageImage: {self.content}]"
@@ -69,8 +69,7 @@ class MessageImage(MessageElement):
         return {"type": "Image", "url": f"{self.content}"}
 
 # Destination
-
-
+# 1 <= DEST <= 2 : QQ
 class DestinationType(Enum):
     QQFriend = 1
     QQGroup = 2

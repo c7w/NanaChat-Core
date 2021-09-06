@@ -6,7 +6,10 @@ Nana-Core: PluginManager Module
 + Manage Plugins
 '''
 
+import os
+import asyncio
 import yaml
+from Utils.extensions import WebSocketQQ
 
 class PluginManager:
     CONFIGURATION = {}
@@ -21,5 +24,11 @@ class PluginManager:
     @staticmethod
     def AppStart():
         PluginManager.LoadConfiguration()
-        print(PluginManager.CONFIGURATION)
         # TODO: Register plugins...
+        for pluginName in os.listdir('./plugins/'):
+            if (not pluginName.startswith('_')) and pluginName.endswith('.py'):
+                __import__('plugins.' + pluginName[:-3])
+        
+        coroutines = asyncio.gather(WebSocketQQ.ExtensionQQ.socket(
+            PluginManager.CONFIGURATION['destinations']['QQ']['ws-adapter-address']))
+        asyncio.get_event_loop().run_until_complete(coroutines)

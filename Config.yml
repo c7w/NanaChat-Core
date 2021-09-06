@@ -1,4 +1,3 @@
 destinations:
   QQ:
-    http-adapter-address: 'http://172.29.0.233:5050'
-    webhook-adapter-address: 'http://172.29.0.233:5051' # Used for dealing with CORS
+    ws-adapter-address: 'ws://192.168.6.200:5050/all'

@@ -30,40 +30,7 @@ user=root
 
 ### Brainstorming 项目构思
 
-我们可以考虑采用 http 和 webhook 两种 adapter，分别模拟主动发信和事件处理.
-
-```mermaid
-graph TB
-    subgraph "NanaChat (Daemon)"
-        nCore["NanaChat-Core (Port 5052)"]
-        nPlugin[NanaChat-Plugins]
-    end
-    
-    subgraph "Mirai-api-http (Daemon)"
-    	ha["HTTP Adapter (Port 5050)"]
-    	wa["Webhook Adapter (Port 5051)"]
-    end
-    
-    wa-->|"收信 [1]"|nCore
-    nCore --> |"自主发信 [2]"| ha
-    nCore --> |"回复收信 [1]"|wa
-    nCore --> nPlugin
-    nPlugin --> nCore
-
-```
-
-```mermaid
-graph TD;
-ncore[NanaChat-Core]
-s[Scheduler<br/>定时事件]
-d[Dispatcher<br/>向HTTP Adapter发送消息]
-l[Listener<br/>监听端口<br/>发送事件信号]
-pm[PluginManager<br/>管理插件<br/>协助注册监听器与调度器]
-ncore --> l
-ncore --> s
-ncore --> d
-ncore --> pm
-```
+我们可以考虑采用 websocket adapter，分别模拟主动发信和事件处理.
 
 ## Docs
 
